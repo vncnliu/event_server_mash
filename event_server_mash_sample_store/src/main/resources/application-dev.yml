@@ -1,0 +1,25 @@
+
+spring:
+  application:
+    name: wxchat-cloud-server
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/event_server_mash?useOldAliasMetadataBehavior=true&useSSL=false
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+  redis:
+    host: 192.168.1.196
+logging:
+  file: logs/${spring.application.name}.log
+  level:
+    root: info
+    top.vncnliu: debug
+    #io.netty: debug
+    #org.hibernate.SQL: DEBUG
+    #org.hibernate: TRACE
+    #org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    #org.springframework.jdbc: TRACE
+server:
+  port: 21000
