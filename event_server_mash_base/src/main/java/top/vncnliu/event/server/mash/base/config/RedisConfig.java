@@ -14,7 +14,7 @@ import org.springframework.data.redis.core.script.RedisScript;
  */
 @Configuration
 public class RedisConfig {
-    public static final String SERVER_REDIS_PREFIX = "lyq_wjl_test";
+    public static final String SERVER_REDIS_PREFIX = "lyq_event_server_mash";
     @Bean
     @Qualifier("unLockScript")
     public RedisScript<String> releaseLock() {

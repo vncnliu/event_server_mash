@@ -6,19 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-import top.vncnliu.event.server.mash.base.entity.EventTask;
-import top.vncnliu.event.server.mash.base.service.IEventTaskService;
+import top.vncnliu.event.server.mash.base.entity.Symbol;
+import top.vncnliu.event.server.mash.base.service.ISymbolService;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-class EventTaskServiceTest {
+class SymbolServiceTest {
 
     @Autowired
-    private IEventTaskService eventTaskService;
+    private ISymbolService symbolService;
 
-    @Test
     @Transactional
-    void saveTest() {
-        eventTaskService.save(new EventTask());
+    @Test
+    void main(){
+        symbolService.persist(new Symbol().setName("test"));
     }
 }

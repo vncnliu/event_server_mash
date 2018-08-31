@@ -139,4 +139,3 @@ public class EventProducer {
         channel.send(buf, inetSocketAddress);
     }
 }
-
