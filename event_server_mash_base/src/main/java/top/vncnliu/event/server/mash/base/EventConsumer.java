@@ -50,8 +50,8 @@ public class EventConsumer {
         port = Utils.init(channel,hostName);
         log.debug("register eventConsumer ip:{} port:{}",hostName,port);
         es.scheduleAtFixedRate(this::setNodeInfo,0,10,TimeUnit.SECONDS);
-        //TODO 消息确认机制
-        //es.scheduleAtFixedRate(this::pullEvent,0,10,TimeUnit.SECONDS);
+        //延迟去数据
+        es.scheduleAtFixedRate(this::pullEvent,0,10,TimeUnit.SECONDS);
         new Thread(() -> {
             try {
                 ByteBuffer buf = ByteBuffer.allocate(65535);
@@ -87,8 +87,9 @@ public class EventConsumer {
     }
 
     private void postEvent(BaseEvent baseEvent){
-        redisService.lock(baseEvent.getEvent_task_id()+"",null,60);
-        eventBus.post(baseEvent);
+        if(redisService.lock(baseEvent.getEvent_task_id()+"",null,0)){
+            eventBus.post(baseEvent);
+        }
     }
 
     private void pullEvent() {
