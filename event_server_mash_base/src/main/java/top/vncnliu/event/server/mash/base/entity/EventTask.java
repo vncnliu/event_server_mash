@@ -14,7 +14,7 @@ import java.util.Date;
  */
 @Entity
 @Data
-@Table(name = "event_task", schema = "event_server_mash")
+@Table(name = "event_task", schema = "event_server_mash", catalog = "event_server_mash")
 @DynamicInsert
 @Accessors(chain = true)
 public class EventTask {
