@@ -11,6 +11,8 @@ import top.vncnliu.event.server.mash.base.service.IRedisService;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
@@ -25,7 +27,10 @@ import java.util.stream.Collectors;
 /**
  * User: vncnliu
  * Date: 2018/7/31
- * Description:
+ * Description: 消费者:
+ * 　　维护节点信息（消费事件，分区等）
+ * 　　提供UDP端口接收producer推送事件
+ * 　　主动从数据库种查找本节点消费分区数据
  */
 @Slf4j
 public class EventConsumer {
@@ -35,7 +40,6 @@ public class EventConsumer {
     private IEventTaskService eventTaskService;
     private IRedisService redisService;
     private EventBus eventBus;
-    private int port;
 
     private Map<String, Set<Integer>> eventPartitions = new ConcurrentHashMap<>();
     private Set<String> events = new ConcurrentSet<>();
@@ -48,10 +52,10 @@ public class EventConsumer {
         this.eventBus = eventBus;
         channel = DatagramChannel.open();
         Selector selector = Selector.open();
-        port = Utils.init(channel, selector, hostName);
-        log.debug("register eventConsumer ip:{} port:{}", hostName, port);
+        Utils.init(channel, selector, hostName);
+        log.debug("register eventConsumer {}", channel.getLocalAddress());
         es.scheduleAtFixedRate(this::setNodeInfo, 0, 10, TimeUnit.SECONDS);
-        //延迟去数据
+        //定时取未实时发送的数据
         es.scheduleAtFixedRate(this::pullEvent, 0, 10, TimeUnit.SECONDS);
         new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
@@ -63,11 +67,11 @@ public class EventConsumer {
                         ite.remove();
                         if (key.isReadable()) {
                             ByteBuffer buf = ByteBuffer.allocate(65535);
-                            channel.receive(buf);
+                            SocketAddress from = channel.receive(buf);
                             byte[] data = buf.array();
                             String msg = new String(data).trim();
                             Integer id = Integer.parseInt(msg);
-                            log.debug("eventConsumer-{}-{} receive event {} on {}", hostName, port, id, System.currentTimeMillis());
+                            log.debug("eventConsumer {} receive event {} from {} on {}", channel.getLocalAddress(), id,from, System.currentTimeMillis());
                             EventTask eventTask = eventTaskService.findById(id);
                             BaseEvent baseEvent = JSON.parseObject(eventTask.getData(), (Type) Class.forName(eventTask.getName()));
                             baseEvent.setEvent_task_id(eventTask.getId())
@@ -112,9 +116,10 @@ public class EventConsumer {
 
     private void setNodeInfo() {
         try {
+            InetSocketAddress socketAddress = (InetSocketAddress) channel.getLocalAddress();
             for (String handleEvent : events) {
                 String redisKey = handleEvent + "-nodes";
-                String nodeAddr = channel.socket().getLocalAddress().getHostAddress() + ":" + channel.socket().getLocalPort();
+                String nodeAddr = socketAddress.getHostName() + ":" + socketAddress.getPort();
                 Map<String, String> oldNodes = redisService.hgetAll(redisKey);
                 Map<String, String> nodes = new HashMap<>();
                 if (oldNodes != null) {
