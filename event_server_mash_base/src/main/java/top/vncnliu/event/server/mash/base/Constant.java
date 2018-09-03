@@ -7,6 +7,8 @@ package top.vncnliu.event.server.mash.base;
  */
 public class Constant {
 
+    public static final String SCHEMA="event_server_mash";
+
     public enum ErrorCode {
         SUCCESS(0,"成功"),
         MASH_BAK_ERROR(100001,"回滚事件异常"),
@@ -46,6 +48,36 @@ public class Constant {
 
         public String getMessage() {
             return message;
+        }
+    }
+
+    public enum REPLY_STATUS {
+        TRUE((short)1),
+        FALSE((short)0);
+
+        private short status;
+
+        REPLY_STATUS(short status) {
+            this.status = status;
+        }
+
+        public short getStatus() {
+            return status;
+        }
+    }
+
+    public enum TAIL_STATUS {
+        TRUE((short)1),
+        FALSE((short)0);
+
+        private short status;
+
+        TAIL_STATUS(short status) {
+            this.status = status;
+        }
+
+        public short getStatus() {
+            return status;
         }
     }
 }

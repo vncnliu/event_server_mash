@@ -141,14 +141,14 @@ public class RedisServiceImpl implements IRedisService {
     @Override
     public boolean lock(String lockKey, String requestId, int expireTime){
         String result = redisTemplate.execute(lockScript,Collections.singletonList(build(lockKey)),requestId,""+expireTime);
-        log.debug("{}获取锁结果{}",build(lockKey),result);
+        log.trace("{}获取锁结果{}",build(lockKey),result);
         return "1".equals(result);
     }
 
     @Override
     public boolean releaseLock(String lockKey, String requestId){
         String result = redisTemplate.execute(unLockScript,Collections.singletonList(build(lockKey)),requestId);
-        log.debug("{}释放锁结果{}",build(lockKey),result);
+        log.trace("{}释放锁结果{}",build(lockKey),result);
         return "1".equals(result);
     }
 

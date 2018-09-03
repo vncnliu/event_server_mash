@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.vncnliu.event.server.mash.base.Constant;
 import top.vncnliu.event.server.mash.base.EventProducer;
+import top.vncnliu.event.server.mash.base.entity.EventTask;
 import top.vncnliu.event.server.mash.base.event.BaseEvent;
 import top.vncnliu.event.server.mash.base.event.EventHandler;
 import top.vncnliu.event.server.mash.base.event.InventoryEvent;
@@ -52,6 +53,7 @@ public class OrderEventHandler {
     @Subscribe
     public void inventory(InventoryEvent event) throws IOException {
         //标记事件状态
+        event.setSource_result("test result");
         int result = eventProducer.commitStatus(event,Constant.TASK_STATUS.EXECUTED.getCode());
         if(result!=1){
             log.error("状态更新异常");

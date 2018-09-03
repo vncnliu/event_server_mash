@@ -5,14 +5,18 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import top.vncnliu.event.server.mash.base.Constant;
 import top.vncnliu.event.server.mash.base.entity.EventTask;
 import top.vncnliu.event.server.mash.base.service.IEventTaskService;
 
 import javax.persistence.EntityManager;
+import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
+import static top.vncnliu.event.server.mash.base.Constant.SCHEMA;
 
 /**
  * User: vncnliu
@@ -38,15 +42,16 @@ public class EventTaskService implements IEventTaskService {
         parameters.addValue("events", events);
         parameters.addValue("status", code);
         return namedParameterJdbcTemplate.query(
-                "select * from event_task where status=:status and name in (:events)",parameters,
+                "select * from "+SCHEMA+".event_task where status=:status and name in (:events)",parameters,
                 new BeanPropertyRowMapper<>(EventTask.class));
     }
 
+    @Transactional
     @Override
     public int updateStatus(int event_task_id, int code) {
         MapSqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", event_task_id).addValue("status", code);
-        return namedParameterJdbcTemplate.update("update event_task set status=:status where id=:id",parameters);
+        return namedParameterJdbcTemplate.update("update "+SCHEMA+".event_task set status=:status where id=:id",parameters);
     }
 
     @Override
@@ -54,9 +59,14 @@ public class EventTaskService implements IEventTaskService {
         return entityManager;
     }
 
+    @Transactional
     @Override
     public void save(EventTask eventTask){
-        entityManager.persist(eventTask);
+        if (eventTask.getId()==null) {
+            entityManager.persist(eventTask);
+        } else {
+            entityManager.merge(eventTask);
+        }
     }
 
     @Override
@@ -66,7 +76,7 @@ public class EventTaskService implements IEventTaskService {
         parameters.addValue("status", Constant.TASK_STATUS.UN_SUBMIT.getCode());
         parameters.addValue("regions", integers);
         return namedParameterJdbcTemplate.query(
-                "select * from event_task where status=:status and name=:event and region in (:regions)",parameters,
+                "select * from "+SCHEMA+".event_task where status=:status and name=:event and region in (:regions)",parameters,
                 new BeanPropertyRowMapper<>(EventTask.class));
     }
 
@@ -75,7 +85,7 @@ public class EventTaskService implements IEventTaskService {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("front_event", event_task_id);
         return namedParameterJdbcTemplate.query(
-                "select * from event_task where front_event=:front_event",parameters,
+                "select * from "+SCHEMA+".event_task where front_event=:front_event",parameters,
                 new BeanPropertyRowMapper<>(EventTask.class));
     }
 }

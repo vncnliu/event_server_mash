@@ -15,4 +15,6 @@ public class BaseEvent {
     private Integer front_event_task_id;
     private Integer source_event_task_id;
     private Short tail;
+    private Short reply;
+    private String source_result;
 }

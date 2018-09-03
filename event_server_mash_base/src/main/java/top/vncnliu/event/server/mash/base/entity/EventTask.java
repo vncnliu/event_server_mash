@@ -22,10 +22,25 @@ public class EventTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    /**
+     * 分区
+     */
     private Integer region;
+    /**
+     * 事件名称
+     */
     private String name;
+    /**
+     * 数据
+     */
     private String data;
+    /**
+     * 生产者ip
+     */
     private String create_ip;
+    /**
+     * 生产者port
+     */
     private int create_port;
     /**
      * 源事件ID
@@ -35,7 +50,19 @@ public class EventTask {
      * 前置事件ID
      */
     private Integer front_event;
+    /**
+     * 是否尾任务
+     * @see top.vncnliu.event.server.mash.base.Constant.TAIL_STATUS
+     */
     private Short tail;
+    /**
+     * 是否需要回复
+     * @see top.vncnliu.event.server.mash.base.Constant.REPLY_STATUS
+     */
+    private Short reply;
+    /**
+     * 事件执行结果
+     */
     private String result;
     @Column(updatable = false)
     private Date time_enable;
@@ -44,7 +71,8 @@ public class EventTask {
     @Column(updatable = false)
     private Date time_modified;
     /**
-     * 3 待通知
+     * 事件状态
+     * @see top.vncnliu.event.server.mash.base.Constant.TASK_STATUS
      */
     private Integer status;
 }
