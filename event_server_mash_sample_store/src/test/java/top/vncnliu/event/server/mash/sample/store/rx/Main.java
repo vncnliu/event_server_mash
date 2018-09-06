@@ -4,6 +4,10 @@ import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import org.junit.Test;
+import reactor.core.publisher.Flux;
+
+import java.lang.reflect.Proxy;
+import java.util.function.Consumer;
 
 /**
  * User: vncnliu
@@ -35,4 +39,11 @@ public class Main {
         Thread.sleep(10000);
     }
 
+    @Test
+    public void testReac(){
+        Flux<Integer> ints = Flux.range(1, 4);
+        ints.subscribe(i -> System.out.println(i),
+                error -> System.err.println("Error " + error),
+                () -> {System.out.println("Done");});
+    }
 }

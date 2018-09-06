@@ -14,11 +14,11 @@ public class TastTwoDB {
 
     // JDBC 驱动名及数据库 URL
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://192.168.1.156:4000";
+    static final String DB_URL = "jdbc:mysql://localhost:3306";
 
     // 数据库的用户名与密码，需要根据自己的设置
     static final String USER = "root";
-    static final String PASS = "";
+    static final String PASS = "root";
 
     @Test
     void main() {
@@ -35,9 +35,9 @@ public class TastTwoDB {
             // 执行查询
             System.out.println("实例化Statement对象...");
             stmt = conn.createStatement();
-            String sql1 = "insert into event_mash_inventory.t_symbol (id,name) values (1,'苹果')";
+            String sql1 = "insert into event_mash_inventory.t_symbol (id,name) values (2,'苹果')";
             stmt.execute(sql1);
-            String sql2 = "insert into event_mash_order.t_order (id,name) values (3,'买苹果3')";
+            String sql2 = "insert into event_mash_order.t_order (id,name) values (4,'买苹果3')";
             stmt.execute(sql2);
             conn.commit();
         }catch(Exception e){

@@ -54,9 +54,9 @@ public class EventConsumer {
         Selector selector = Selector.open();
         Utils.init(channel, selector, hostName);
         log.debug("register eventConsumer {}", channel.getLocalAddress());
-        es.scheduleAtFixedRate(this::setNodeInfo, 0, 10, TimeUnit.SECONDS);
+        /*es.scheduleAtFixedRate(this::setNodeInfo, 0, 10, TimeUnit.SECONDS);
         //定时取未实时发送的数据
-        es.scheduleAtFixedRate(this::pullEvent, 0, 10, TimeUnit.SECONDS);
+        es.scheduleAtFixedRate(this::pullEvent, 0, 10, TimeUnit.SECONDS);*/
         new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
